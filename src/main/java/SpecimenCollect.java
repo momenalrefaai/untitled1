@@ -1,121 +1,12 @@
+import Types.*;
+import parent.Specimen;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpecimenCollect {
-
-
-    static class Specimen {
-
-        private Integer id;
-        private Species species;
-
-        private Double weight;
-        private Double length;
-        private Integer numberOfWorkingFlippers;
-
-        private LocalDateTime localDateTime;
-        private String location;
-
-        public Specimen() {
-        }
-
-        public Specimen( Species species, Double weight, Double length, Integer numberOfWorkingFlippers, String location) {
-
-            this.species = species;
-            this.weight = weight;
-            this.length = length;
-            this.numberOfWorkingFlippers = numberOfWorkingFlippers;
-            this.localDateTime = LocalDateTime.now();
-            this.location = location;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public Species getSpecies() {
-            return species;
-        }
-
-        public void setSpecies(Species species) {
-            this.species = species;
-        }
-
-        public Double getWeight() {
-            return weight;
-        }
-
-        public void setWeight(Double weight) {
-            this.weight = weight;
-        }
-
-        public Double getLength() {
-            return length;
-        }
-
-        public void setLength(Double length) {
-            this.length = length;
-        }
-
-        public Integer getNumberOfWorkingFlippers() {
-            return numberOfWorkingFlippers;
-        }
-
-        public void setNumberOfWorkingFlippers(Integer numberOfWorkingFlippers) {
-            this.numberOfWorkingFlippers = numberOfWorkingFlippers;
-        }
-
-        public LocalDateTime getLocalDateTime() {
-            return localDateTime;
-        }
-
-        public void setLocalDateTime(LocalDateTime localDateTime) {
-            this.localDateTime = localDateTime;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-
-        @Override
-        public String toString() {
-            return "Specimen{" +
-                    "id=" + id +
-                    ", species=" + species +
-                    ", weight=" + weight +
-                    ", length=" + length +
-                    ", numberOfWorkingFlippers=" + numberOfWorkingFlippers +
-                    ", localDateTime=" + localDateTime +
-                    ", location='" + location + '\'' +
-                    '}';
-        }
-    }
-
-    enum Species {
-        Leatherback("1"), Loggerhead("2"), Green("2"), Flatback("3"), Hawksbill("4"), Kemp_ridley("5"), Olive_ridley("6");
-
-        private final String abbreviation;
-
-        Species(String abbreviation) {
-            this.abbreviation = abbreviation;
-        }
-
-        public static Species findByAbbr(final String abbr) {
-            return Arrays.stream(values()).filter(value -> value.abbreviation.equals(abbr)).findFirst().orElse(null);
-        }
-
-    }
 
     static List<Specimen> specimenArrayList = new ArrayList<>();
     static Integer counter = 0;
@@ -132,7 +23,7 @@ public class SpecimenCollect {
             System.out.println("4.delete an existing record ");
             System.out.println("5.view all records ");
             System.out.println("6.generate report bt date and location ");
-            System.out.println("7.search on Specimen by species");
+            System.out.println("7.search on parent.Specimen by species");
 
             Scanner sc = new Scanner(System.in);
 
@@ -220,7 +111,7 @@ public class SpecimenCollect {
     public static Specimen instantiateRecord() {
 
         Scanner sc = new Scanner(System.in);
-        Species species = getSpeciesByAbb();
+        String type = getSpeciesByAbb();
         System.out.println("Please Enter Wight in kg");
         Double wight = sc.nextDouble();
         System.out.println("Please Enter Length in cm");
@@ -229,8 +120,39 @@ public class SpecimenCollect {
         Integer numbers = sc.nextInt();
         System.out.println("Please Enter location (for example, Santubong, Sematan or Telaga Air)");
         String location = sc.next();
+        Specimen specimen;
+        switch (type){
+            case "Leatherback":
+                specimen = new Leatherback(wight, length, numbers, location);
+                break;
 
-        Specimen specimen = new Specimen( species, wight, length, numbers, location);
+            case "Loggerhead":
+                specimen = new Loggerhead(wight, length, numbers, location);
+                break;
+
+            case "Green":
+                specimen = new Green(wight, length, numbers, location);
+                break;
+
+            case "Flatback":
+                specimen = new Flatback(wight, length, numbers, location);
+                break;
+
+            case "Hawksbil":
+                specimen = new Hawksbil(wight, length, numbers, location);
+                break;
+
+            case "KempsRidley":
+                specimen = new KempsRidley(wight, length, numbers, location);
+                break;
+
+            case "OlivRidley":
+                specimen = new OlivRidley(wight, length, numbers, location);
+                break;
+
+            default:
+                specimen = new Specimen("no type",wight, length, numbers, location);
+        }
         return specimen;
     }
 
@@ -239,7 +161,7 @@ public class SpecimenCollect {
 
 
         s1.setLength(s2.getLength());
-        s1.setSpecies(s2.getSpecies());
+        s1.setType(s2.getType());
         s1.setLocation(s2.getLocation());
         s1.setWeight(s2.getWeight());
         s1.setLocalDateTime(s2.getLocalDateTime());
@@ -251,7 +173,7 @@ public class SpecimenCollect {
     public static void viewAll() {
         System.out.printf("%10s %20s ", "ID", "SPECIES \n");
         specimenArrayList.forEach(s ->
-                System.out.format("%10s %20s \n ", s.getId(), s.getSpecies())
+                System.out.format("%10s %20s \n ", s.getId(), s.getType())
         );
 
 
@@ -271,8 +193,8 @@ public class SpecimenCollect {
     public static void searchBySpecies() {
 
         System.out.printf("%10s %20s ", "ID", "SPECIES \n");
-        specimenArrayList.stream().filter(s->s.getSpecies().equals(getSpeciesByAbb())).collect(Collectors.toList()).forEach(s ->
-                System.out.format("%10s %20s \n ", s.getId(), s.getSpecies())
+        specimenArrayList.stream().filter(s->s.getType().equals(getSpeciesByAbb())).collect(Collectors.toList()).forEach(s ->
+                System.out.format("%10s %20s \n ", s.getId(), s.getType())
         );
 
 
@@ -297,14 +219,14 @@ public class SpecimenCollect {
         System.out.printf("%10s %20s ", "ID", "SPECIES \n");
         specimenArrayList.stream().filter(s->s.getLocation().equals(location)&&s.localDateTime.isAfter(dateTime1)
                 &&s.localDateTime.isBefore(dateTime2)).collect(Collectors.toList()).forEach(s ->
-                System.out.format("%10s %20s \n ", s.getId(), s.getSpecies())
+                System.out.format("%10s %20s \n ", s.getId(), s.getType())
         );
 
 
     }
 
 
-    public static Species getSpeciesByAbb(){
+    public static String getSpeciesByAbb(){
 
         System.out.println("Please Choose Species Type");
         System.out.println("1.Leatherback ");
@@ -312,13 +234,12 @@ public class SpecimenCollect {
         System.out.println("3.Green");
         System.out.println("4.Flatback");
         System.out.println("5.Hawksbil");
-        System.out.println("6.Kemp’s ridley");
-        System.out.println("7.Hawksbil");
-        System.out.println("7.Olive ridley");
+        System.out.println("6.KempsRidley");
+        System.out.println("7.OlivRidley");
         Scanner sc = new Scanner(System.in);
         String abb = sc.next();
 
-        return Species.findByAbbr(abb);
+        return abb;
 
 
     }
