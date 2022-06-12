@@ -1,14 +1,11 @@
 import Types.*;
 import parent.Specimen;
 
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class SpecimenCollect {
 
@@ -84,9 +81,17 @@ public class SpecimenCollect {
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:sqlite:C:/sqlite/JTP.db";
+            String url = "jdbc:sqlite:/Users/momenal-refai/sqlite/test2.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
+
+            Statement statement = conn.createStatement();
+
+            ResultSet resultSet = statement.executeQuery("select * from specimens");
+
+            while (resultSet.next()){
+                System.out.println(resultSet.getString("type"));
+            }
 
             System.out.println("Connection to SQLite has been established.");
 
