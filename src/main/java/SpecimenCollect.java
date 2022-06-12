@@ -6,12 +6,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class SpecimenCollect {
 
     static List<Specimen> specimenArrayList = new ArrayList<>();
     static Integer counter = 0;
 
     public static void main(String[] args) {
+        connect();
         while (true) {
             boolean isWrongAnswer = false;
 
@@ -75,6 +80,28 @@ public class SpecimenCollect {
         return ++counter;
     }
 
+    public static void connect() {
+        Connection conn = null;
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:C:/sqlite/JTP.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+
+            System.out.println("Connection to SQLite has been established.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
 
     public static Specimen addNewRecord() {
 
